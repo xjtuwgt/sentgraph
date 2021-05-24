@@ -95,7 +95,7 @@ def find_sub_list(target: list, source: list) -> int:
             return i
     return -1
 ########################################################################################################################
-def ranked_context_processing(row, tokenizer, selected_para_titles, is_roberta):
+def selected_context_processing(row, tokenizer, selected_para_titles, is_roberta):
     question, supporting_facts, contexts, answer = row['question'], row['supporting_facts'], row['context'], row['answer']
     doc_title2doc_len = dict([(title, len(text)) for title, text in contexts])
     supporting_facts_filtered = [(supp_title, supp_sent_idx) for supp_title, supp_sent_idx in supporting_facts
@@ -171,7 +171,7 @@ def hotpot_sent_edge_tokenizer(para_file: str,
         sel_paras = sel_para_data[key]
         selected_para_titles = itertools.chain.from_iterable(sel_paras)
         norm_question, norm_answer, selected_contexts, supporting_facts_filtered, yes_no_flag, answer_found_flag = \
-            ranked_context_processing(row=row, tokenizer=tokenizer, selected_para_titles=selected_para_titles, is_roberta=is_roberta)
+            selected_context_processing(row=row, tokenizer=tokenizer, selected_para_titles=selected_para_titles, is_roberta=is_roberta)
         # print(yes_no_flag, answer_found_flag)
         if not answer_found_flag and not yes_no_flag:
             answer_not_found_count = answer_not_found_count + 1
@@ -361,22 +361,6 @@ def trim_input_span(doc_input_ids, query_spans, para_spans, sent_spans, limit, s
         if largest_para_idx < len(para_spans):
             if para_spans[largest_para_idx][0] < trim_seq_len:
                 trim_para_spans += [(para_spans[largest_para_idx][0], trim_seq_len)]
-        # trim_para_spans = [[_[0], _[1]] for _ in trim_para_spans]
-        # trim_para_spans[largest_para_idx][1] = limit
-        # trim_para_spans = [(_[0], _[1]) for _ in trim_para_spans]
-        # largest_sent_idx = largest_valid_index(sent_spans, limit)
-        # trim_sent_spans = []
-        # trim_sent_spans += sent_spans[:largest_sent_idx]
-        # largest_sent_start, largest_sent_end = sent_spans[largest_sent_idx]
-        # trim_sent_spans = []
-        # if (limit - largest_sent_start) < (largest_sent_end - largest_sent_start) * 0.8:
-        #     trim_sent_spans += sent_spans[:(largest_sent_idx)]
-        # else:
-        #     trim_sent_spans += sent_spans[:(largest_sent_idx+1)]
-        #     trim_sent_spans = [[_[0], _[1]] for _ in trim_sent_spans]
-        #     trim_sent_spans[largest_sent_idx][1] = limit
-        #     trim_sent_spans = [(_[0], _[1]) for _ in trim_sent_spans]
-
         if ans_spans is not None:
             largest_ans_idx = largest_valid_index(ans_spans, limit)
             trim_ans_spans = []
