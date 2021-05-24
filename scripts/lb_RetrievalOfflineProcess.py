@@ -2,6 +2,7 @@
 import pandas as pd
 from pandas import DataFrame
 from time import time
+import swifter
 from scripts.lb_Longformer_hotpotQAUtils import LongformerTokenizer, normalize_question, normalize_text, \
     query_encoder, context_encoder, test_context_merge_longer
 
