@@ -146,6 +146,43 @@ def selected_context_processing(row, tokenizer, selected_para_titles, is_roberta
         norm_answer = 'noanswer'
     return norm_question, norm_answer, selected_contexts, supporting_facts_filtered, yes_no_flag, answer_found_flag
 #=======================================================================================================================
+def graph_construction(query_ner, ctx_sent_ners_list):
+    edges = {}
+    sent_id = 0
+    ctx_sent_ner2id_list = []
+    for para_id, sent_ners in enumerate(ctx_sent_ners_list):
+        ctx_sent_ner2id = []
+        for local_sent_idx, sent_ner in enumerate(sent_ners):
+            ctx_sent_ner2id.append((sent_ner, sent_id, local_sent_idx, para_id))
+            sent_id = sent_id + 1
+        ctx_sent_ner2id_list.append(ctx_sent_ner2id)
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    edges['in_s2s'] = []
+    for para_id, sent_ner2ids in enumerate(ctx_sent_ner2id_list):
+        sent_num = len(sent_ner2ids)
+        for i in range(sent_num-1):
+            sent_ner_i, send_id_i, _, _ = sent_ner2ids[i]
+            for j in range(i+1, sent_num):
+                sent_ner_j, sent_id_j, _, _ = sent_ner2ids[j]
+                edges['in_s2s'].append((send_id_i, 0, sent_id_j))
+    # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    edges['q_s2s'] = []
+    edges['e_s2s'] = []
+    para_num = len(ctx_sent_ner2id_list)
+    for i in range(0, para_num - 1):
+        sent_ner2ids_i = ctx_sent_ner2id_list[i]
+        for j in range(i+1, para_num):
+            sent_ner2ids_j = ctx_sent_ner2id_list[j]
+            for sent_ner_i, sent_ner_j in zip((sent_ner2ids_i, sent_ner2ids_j)):
+                ner_i, send_id_i, _, _ = sent_ner_i
+                ner_j, sent_id_j, _, _ = sent_ner_j
+                if ner_i in query_ner and ner_j in query_ner:
+                    edges['q_s2s'].append((send_id_i, 1, sent_id_j))
+                if ner_i == ner_j:
+                    edges['e_s2s'].append((send_id_i, 2, sent_id_j))
+    # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    return edges
+#=======================================================================================================================
 def hotpot_sent_edge_tokenizer(para_file: str,
                             full_file: str,
                             ner_file: str,
@@ -199,12 +236,14 @@ def hotpot_sent_edge_tokenizer(para_file: str,
         ans_input_ids = []
         # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         ner_context = dict(ner_data[key]['context'])
+        ctx_sent_ner_list = []
         # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         for para_idx, para_tuple in enumerate(selected_contexts):
             para_num += 1
             title, sents, _, answer_sent_flags, supp_para_flag = para_tuple
-            sents_ner = ner_context[title]
-            assert len(sents) == len(sents_ner)
+            sent_ners = ner_context[title]
+            assert len(sents) == len(sent_ners)
+            ctx_sent_ner_list.append(sent_ners)
             para_names.append(title)
             if supp_para_flag:
                 sup_para_id.append(para_idx)
@@ -255,11 +294,13 @@ def hotpot_sent_edge_tokenizer(para_file: str,
             assert len(para_names) == para_num
             assert len(sent_names) == sent_num
             assert len(ctx_token_list) == para_num and len(ctx_input_id_list) == para_num
+            assert len(ctx_sent_ner_list) == para_num
         ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++diff the rankers
         if data_source_type is not None:
             key = key + "_" + data_source_type
         ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
+        edges = graph_construction(query_ner=query_ner, ctx_sent_ners_list=ctx_sent_ner_list)
+        ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         example = Example(qas_id=key,
                           qas_type=qas_type,
                           ctx_text=selected_contexts,
@@ -278,7 +319,8 @@ def hotpot_sent_edge_tokenizer(para_file: str,
                           answer_tokens=ans_sub_tokens,
                           answer_input_ids=ans_input_ids,
                           answer_positions=answer_positions,
-                          ctx_with_answer=ctx_with_answer)
+                          ctx_with_answer=ctx_with_answer,
+                          edges=edges)
         examples.append(example)
     print('Answer not found = {}'.format(answer_not_found_count))
     return examples
