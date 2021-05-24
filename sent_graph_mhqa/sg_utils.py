@@ -176,6 +176,8 @@ def hotpot_sent_edge_tokenizer(para_file: str,
         if not answer_found_flag and not yes_no_flag:
             answer_not_found_count = answer_not_found_count + 1
         # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        query_ner = ner_data[key]['question']
+        # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         query_tokens = [cls_token]
         query_words, query_sub_tokens = tokenize_text(text=norm_question, tokenizer=tokenizer, is_roberta=is_roberta)
         query_tokens += query_sub_tokens
@@ -196,9 +198,13 @@ def hotpot_sent_edge_tokenizer(para_file: str,
         ans_sub_tokens = []
         ans_input_ids = []
         # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        ner_context = dict(ner_data[key]['context'])
+        # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         for para_idx, para_tuple in enumerate(selected_contexts):
             para_num += 1
             title, sents, _, answer_sent_flags, supp_para_flag = para_tuple
+            sents_ner = ner_context[title]
+            assert len(sents) == len(sents_ner)
             para_names.append(title)
             if supp_para_flag:
                 sup_para_id.append(para_idx)
