@@ -195,6 +195,7 @@ def graph_construction(query_ner, ctx_sent_ners_list):
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     for key, value in edges.items():
         print('{}\t{}'.format(key, len(value)))
+        print('-' * 20)
     return edges
 #=======================================================================================================================
 def hotpot_sent_edge_tokenizer(para_file: str,
