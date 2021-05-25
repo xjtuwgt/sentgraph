@@ -8,7 +8,7 @@ from os.path import join
 from sent_graph_mhqa.sg_utils import hotpot_sent_edge_tokenizer
 
 def get_cached_filename(f_type, config):
-    f_type_set = {'long_low_graph_hotpotqa_tokenized_examples', 'hgn_low_graph_hotpotqa_tokenized_examples'}
+    f_type_set = {'long_low_graph_hotpotqa_tokenized_examples'}
     assert f_type in f_type_set
     return f"cached_{f_type}_{config.model_type}.pkl.gz"
 
@@ -62,6 +62,7 @@ if __name__ == '__main__':
     else:
         data_source_type = None
     print('data_type = {} \n data_source_id = {} \n data_source_name = {}'.format(data_type, data_source_type, data_source_name))
+    start_time = time()
     examples = hotpot_sent_edge_tokenizer(para_file=args.para_path,
                                    full_file=args.full_data,
                                    ner_file=args.ner_path,
@@ -70,3 +71,10 @@ if __name__ == '__main__':
                                    sep_token=tokenizer.sep_token,
                                    is_roberta=bool(args.model_type in ['roberta']),
                                    data_source_type=data_source_type)
+    print('Tokenizing takes {} seconds'.format(time() - start_time))
+    sr_example_name = get_cached_filename('{}_graph_hotpotqa_tokenized_examples'.format(data_source_name), config=args)
+    cached_examples_file = join(args.output_dir, sr_example_name)
+    print('Sentence replacement example file name = {}'.format(sr_example_name))
+    with gzip.open(cached_examples_file, 'wb') as fout:
+        pickle.dump(examples, fout)
+    print('Saving {} examples in {}'.format(len(examples), cached_examples_file))
