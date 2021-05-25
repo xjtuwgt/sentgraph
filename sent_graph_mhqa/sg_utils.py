@@ -148,13 +148,14 @@ def selected_context_processing(row, tokenizer, selected_para_titles, is_roberta
 #=======================================================================================================================
 def graph_construction(query_ner, ctx_sent_ners_list):
     edges = {}
+    query_ner_ = [_[0].strip().lower() for _ in query_ner]
     sent_id = 0
     ctx_sent_ner2id_list = []
     for para_id, sent_ners in enumerate(ctx_sent_ners_list):
         ctx_sent_ner2id = []
         for local_sent_idx, sent_ner in enumerate(sent_ners):
-            print(sent_ner)
-            ctx_sent_ner2id.append((sent_ner, sent_id, local_sent_idx, para_id))
+            sent_ner_ = [_[0].strip().lower() for _ in sent_ner]
+            ctx_sent_ner2id.append((sent_ner_, sent_id, local_sent_idx, para_id))
             sent_id = sent_id + 1
         ctx_sent_ner2id_list.append(ctx_sent_ner2id)
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -169,26 +170,22 @@ def graph_construction(query_ner, ctx_sent_ners_list):
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     edges['q_s2s'] = []
     edges['e_s2s'] = []
-    query_ner_ = [_[0].strip().lower() for _ in query_ner]
     para_num = len(ctx_sent_ner2id_list)
     for i in range(0, para_num - 1):
         sent_ner2ids_i = ctx_sent_ner2id_list[i]
         for j in range(i+1, para_num):
             sent_ner2ids_j = ctx_sent_ner2id_list[j]
-            # print(sent_ner2ids_i, sent_ner2ids_j)
-            # print(query_ner)
-            # print('*' * 30)
             for ner_id_i in sent_ner2ids_i:
                 for ner_id_j in sent_ner2ids_j:
                     ner_i, send_id_i, _, _ = ner_id_i
                     ner_j, sent_id_j, _, _ = ner_id_j
-                    ner_i_ = ner_i[0].strip().lower()
-                    ner_j_ = ner_j[0].strip().lower()
-                    if ner_i_ in query_ner_ and ner_j_ in query_ner_:
+                    if ner_i in query_ner_ and ner_j in query_ner_:
                         edges['q_s2s'].append((send_id_i, 1, sent_id_j))
-                    if ner_i_ == ner_j_:
+                    if ner_i == ner_j:
                         edges['e_s2s'].append((send_id_i, 2, sent_id_j))
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    for key, value in edges.items():
+        print('{}\t{}'.format(key, value))
     return edges
 #=======================================================================================================================
 def hotpot_sent_edge_tokenizer(para_file: str,
