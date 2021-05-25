@@ -178,6 +178,7 @@ def graph_construction(query_ner, ctx_sent_ners_list):
     para_num = len(ctx_sent_ner2id_list)
     for i in range(0, para_num - 1):
         sent_ner2ids_i = ctx_sent_ner2id_list[i]
+        print(len(sent_ner2ids_i))
         for j in range(i+1, para_num):
             sent_ner2ids_j = ctx_sent_ner2id_list[j]
             for ner_id_i in sent_ner2ids_i:
