@@ -30,6 +30,7 @@ if __name__ == '__main__':
     parser.add_argument("--do_lower_case", action='store_true',
                         help="Set this flag if you are using an uncased model.")
     parser.add_argument("--max_entity_num", default=60, type=int)
+    parser.add_argument("--max_para_num", type=int, required=True)
     parser.add_argument("--max_sent_num", default=40, type=int)
     parser.add_argument("--max_query_length", default=50, type=int)
     parser.add_argument("--max_seq_length", default=512, type=int,
