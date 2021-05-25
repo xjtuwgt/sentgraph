@@ -2,6 +2,7 @@ import argparse
 from envs import OUTPUT_FOLDER, DATASET_FOLDER, PRETRAINED_MODEL_FOLDER
 from model_envs import MODEL_CLASSES
 from sent_graph_mhqa.sent_graph_datahelper import DataHelper
+from utils.gpu_utils import single_free_cuda
 import os
 from os.path import join
 import torch
@@ -62,7 +63,7 @@ def parse_args():
                         default=4,
                         type=int,
                         help="Batch size per GPU/CPU for training.")
-    parser.add_argument("--eval_batch_size", default=16, type=int)
+    parser.add_argument("--batch_size", default=16, type=int)
     # encoder
     parser.add_argument("--frozen_layer_number", default=0, type=int)
     parser.add_argument("--fine_tuned_encoder", default=None, type=str)
@@ -87,6 +88,23 @@ def parse_args():
     parser.add_argument("--max_sent_num", default=40, type=int)
     parser.add_argument("--max_entity_num", default=60, type=int)
 
+    args = parser.parse_args()
+    return args
+
+
+def complete_default_train_parser(args):
+    if torch.cuda.is_available():
+        device_ids, _ = single_free_cuda()
+        device = torch.device('cuda:{}'.format(device_ids[0]))
+    else:
+        device = torch.device('cpu')
+    args.device = device
+    args.max_doc_len = 512
+    args.input_dim = 768 if 'base' in args.encoder_name_or_path else (4096 if 'albert' in args.encoder_name_or_path else 1024)
+
+    return args
+
+
 
 def feature_extraction(args):
     encoder, _ = load_encoder_model(args.encoder_name_or_path, args.model_type)
@@ -104,8 +122,13 @@ def feature_extraction(args):
 
     encoder.eval()
     for step, batch in enumerate(dev_data_loader):
+        for key, value in batch.items():
+            if key not in {'ids', 'edges'}:
+                batch[key] = value.to(args.device)
+
         inputs = {'input_ids': batch['context_idxs'],
                   'attention_mask': batch['context_mask'],
                   'token_type_ids': batch['segment_idxs'] if args.model_type in ['bert',
                                                                                         'xlnet'] else None}  # XLM don't use segment_ids
-        outputs = encoder(**inputs)
+        with torch.no_grad():
+            outputs = encoder(**inputs)
