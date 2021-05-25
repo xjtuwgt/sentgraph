@@ -153,7 +153,7 @@ def intersection(lst1, lst2):
 def graph_construction(query_ner, ctx_sent_ners_list):
     ##ner format: (ner_text, start_idx, end_idx, type)
     edges = {}
-    query_ner_ = [_[0].strip().lower() for _ in query_ner]
+    query_ner_ = [_[0].strip().lower() for _ in query_ner if _[3] not in ['CONTEXT', 'TITLE']]
     sent_id = 0
     ctx_sent_ner2id_list = []
     for para_id, sent_ners in enumerate(ctx_sent_ners_list):
@@ -316,7 +316,7 @@ def hotpot_sent_edge_tokenizer(para_file: str,
         ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         edges = graph_construction(query_ner=query_ner, ctx_sent_ners_list=ctx_sent_ner_list)
         if len(query_ner) > 10:
-            print(query_ner)
+            print([_[0] for _ in query_ner if _[3] not in ['CONTEXT', 'TITLE']])
             print(norm_question)
         ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         example = Example(qas_id=key,
