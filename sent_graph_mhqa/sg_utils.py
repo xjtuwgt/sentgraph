@@ -316,7 +316,7 @@ def hotpot_sent_edge_tokenizer(para_file: str,
         ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         edges = graph_construction(query_ner=query_ner, ctx_sent_ners_list=ctx_sent_ner_list)
         if len(query_ner) > 10:
-            print([_[0] for _ in query_ner])
+            print(query_ner)
             print(norm_question)
         ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         example = Example(qas_id=key,
