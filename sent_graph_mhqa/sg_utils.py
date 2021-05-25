@@ -147,6 +147,9 @@ def selected_context_processing(row, tokenizer, selected_para_titles, is_roberta
     return norm_question, norm_answer, selected_contexts, supporting_facts_filtered, yes_no_flag, answer_found_flag
 #=======================================================================================================================
 def graph_construction(query_ner, ctx_sent_ners_list):
+    def cross_sent_link(query_ner, sent_ner_i, sent_ner_j):
+
+
     edges = {}
     sent_id = 0
     ctx_sent_ner2id_list = []
@@ -173,13 +176,14 @@ def graph_construction(query_ner, ctx_sent_ners_list):
         sent_ner2ids_i = ctx_sent_ner2id_list[i]
         for j in range(i+1, para_num):
             sent_ner2ids_j = ctx_sent_ner2id_list[j]
-            for sent_ner_i, sent_ner_j in zip((sent_ner2ids_i, sent_ner2ids_j)):
-                ner_i, send_id_i, _, _ = sent_ner_i
-                ner_j, sent_id_j, _, _ = sent_ner_j
-                if ner_i in query_ner and ner_j in query_ner:
-                    edges['q_s2s'].append((send_id_i, 1, sent_id_j))
-                if ner_i == ner_j:
-                    edges['e_s2s'].append((send_id_i, 2, sent_id_j))
+            for ner_id_i in sent_ner2ids_i:
+                for ner_id_j in sent_ner2ids_j:
+                    ner_i, send_id_i, _, _ = ner_id_i
+                    ner_j, sent_id_j, _, _ = ner_id_j
+                    if ner_i in query_ner and ner_j in query_ner:
+                        edges['q_s2s'].append((send_id_i, 1, sent_id_j))
+                    if ner_i == ner_j:
+                        edges['e_s2s'].append((send_id_i, 2, sent_id_j))
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     return edges
 #=======================================================================================================================
