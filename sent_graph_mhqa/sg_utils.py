@@ -153,6 +153,7 @@ def graph_construction(query_ner, ctx_sent_ners_list):
     for para_id, sent_ners in enumerate(ctx_sent_ners_list):
         ctx_sent_ner2id = []
         for local_sent_idx, sent_ner in enumerate(sent_ners):
+            print(sent_ner)
             ctx_sent_ner2id.append((sent_ner, sent_id, local_sent_idx, para_id))
             sent_id = sent_id + 1
         ctx_sent_ner2id_list.append(ctx_sent_ner2id)
