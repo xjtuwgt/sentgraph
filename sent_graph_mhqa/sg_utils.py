@@ -151,6 +151,7 @@ def intersection(lst1, lst2):
     inter_len = len(intersect)
     return inter_len > 0
 def graph_construction(query_ner, ctx_sent_ners_list):
+    ##ner format: (ner_text, start_idx, end_idx, type)
     edges = {}
     query_ner_ = [_[0].strip().lower() for _ in query_ner]
     sent_id = 0
