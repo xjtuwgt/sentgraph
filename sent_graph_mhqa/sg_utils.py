@@ -168,6 +168,7 @@ def graph_construction(query_ner, ctx_sent_ners_list):
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     edges['q_s2s'] = []
     edges['e_s2s'] = []
+    query_ner_ = [_[0].strip().lower() for _ in query_ner]
     para_num = len(ctx_sent_ner2id_list)
     for i in range(0, para_num - 1):
         sent_ner2ids_i = ctx_sent_ner2id_list[i]
@@ -180,9 +181,11 @@ def graph_construction(query_ner, ctx_sent_ners_list):
                 for ner_id_j in sent_ner2ids_j:
                     ner_i, send_id_i, _, _ = ner_id_i
                     ner_j, sent_id_j, _, _ = ner_id_j
-                    if ner_i in query_ner and ner_j in query_ner:
+                    ner_i_ = ner_i[0].strip().lower()
+                    ner_j_ = ner_j[0].strip().lower()
+                    if ner_i_ in query_ner_ and ner_j_ in query_ner_:
                         edges['q_s2s'].append((send_id_i, 1, sent_id_j))
-                    if ner_i == ner_j:
+                    if ner_i_ == ner_j_:
                         edges['e_s2s'].append((send_id_i, 2, sent_id_j))
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     return edges
