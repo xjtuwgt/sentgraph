@@ -186,6 +186,7 @@ def graph_construction(query_ner, ctx_sent_ners_list):
                     if (intersection(ner_i, query_ner_)) and (intersection(ner_j, query_ner_)):
                         print(ner_i)
                         print(ner_j)
+                        print(query_ner_)
                         print('_' * 20)
                         edges['q_s2s'].append((send_id_i, 1, sent_id_j))
                     if intersection(ner_i, ner_j):
