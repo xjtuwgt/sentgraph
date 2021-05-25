@@ -69,7 +69,3 @@ if __name__ == '__main__':
                                    sep_token=tokenizer.sep_token,
                                    is_roberta=bool(args.model_type in ['roberta']),
                                    data_source_type=data_source_type)
-
-
-
-
