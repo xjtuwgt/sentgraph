@@ -72,9 +72,9 @@ if __name__ == '__main__':
                                    is_roberta=bool(args.model_type in ['roberta']),
                                    data_source_type=data_source_type)
     print('Tokenizing takes {} seconds'.format(time() - start_time))
-    sr_example_name = get_cached_filename('{}_graph_hotpotqa_tokenized_examples'.format(data_source_name), config=args)
-    cached_examples_file = join(args.output_dir, sr_example_name)
-    print('Sentence replacement example file name = {}'.format(sr_example_name))
+    sent_graph_example_name = get_cached_filename('{}_graph_hotpotqa_tokenized_examples'.format(data_source_name), config=args)
+    cached_examples_file = join(args.output_dir, sent_graph_example_name)
+    print('Graph example file name = {}'.format(sent_graph_example_name))
     with gzip.open(cached_examples_file, 'wb') as fout:
         pickle.dump(examples, fout)
     print('Saving {} examples in {}'.format(len(examples), cached_examples_file))
