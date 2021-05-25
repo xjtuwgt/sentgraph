@@ -183,13 +183,18 @@ def graph_construction(query_ner, ctx_sent_ners_list):
                 for ner_id_j in sent_ner2ids_j:
                     ner_i, send_id_i, _, _ = ner_id_i
                     ner_j, sent_id_j, _, _ = ner_id_j
-                    if ner_i in query_ner_ and ner_j in query_ner_:
+                    if ner_i in query_ner_:
+                        print(ner_i)
+                        print(ner_j)
+                        print(query_ner_)
+                        print('_' * 10)
+                    if (ner_i in query_ner_) and (ner_j in query_ner_):
                         edges['q_s2s'].append((send_id_i, 1, sent_id_j))
                     if ner_i == ner_j:
                         edges['e_s2s'].append((send_id_i, 2, sent_id_j))
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     for key, value in edges.items():
-        if key == 'q_s2s':
+        if key == 'q_s2s' and len(value) > 0:
             print('{}\t{}'.format(key, value))
     return edges
 #=======================================================================================================================
