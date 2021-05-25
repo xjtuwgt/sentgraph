@@ -146,6 +146,10 @@ def selected_context_processing(row, tokenizer, selected_para_titles, is_roberta
         norm_answer = 'noanswer'
     return norm_question, norm_answer, selected_contexts, supporting_facts_filtered, yes_no_flag, answer_found_flag
 #=======================================================================================================================
+def intersection(lst1, lst2):
+    intersect = set(lst1) & set(lst2)
+    inter_len = len(intersect)
+    return inter_len > 0
 def graph_construction(query_ner, ctx_sent_ners_list):
     edges = {}
     query_ner_ = [_[0].strip().lower() for _ in query_ner]
@@ -175,20 +179,13 @@ def graph_construction(query_ner, ctx_sent_ners_list):
         sent_ner2ids_i = ctx_sent_ner2id_list[i]
         for j in range(i+1, para_num):
             sent_ner2ids_j = ctx_sent_ner2id_list[j]
-            # print(sent_ner2ids_i)
-            # print(sent_ner2ids_j)
-            # print(query_ner_)
-            # print('*' * 20)
             for ner_id_i in sent_ner2ids_i:
                 for ner_id_j in sent_ner2ids_j:
                     ner_i, send_id_i, _, _ = ner_id_i
                     ner_j, sent_id_j, _, _ = ner_id_j
-                    print(ner_i, ner_j)
-                    print(query_ner_)
-                    print('_' * 10)
-                    if (ner_i in query_ner_) and (ner_j in query_ner_):
+                    if (intersection(ner_i, query_ner_)) and (intersection(ner_j, query_ner_)):
                         edges['q_s2s'].append((send_id_i, 1, sent_id_j))
-                    if ner_i == ner_j:
+                    if intersection(ner_i, ner_j):
                         edges['e_s2s'].append((send_id_i, 2, sent_id_j))
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     for key, value in edges.items():
