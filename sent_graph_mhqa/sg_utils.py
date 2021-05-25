@@ -182,6 +182,8 @@ def graph_construction(query_ner, ctx_sent_ners_list):
                     if ner_i == ner_j:
                         edges['e_s2s'].append((send_id_i, 2, sent_id_j))
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    for key, value in edges.items():
+        print('{}\t{}'.format(key, value))
     return edges
 #=======================================================================================================================
 def hotpot_sent_edge_tokenizer(para_file: str,
