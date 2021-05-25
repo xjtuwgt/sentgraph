@@ -349,6 +349,7 @@ def case_to_features(case: Example, train_dev=True):
     para_num = case.para_num
     para_names = case.para_names
     sent_names = case.sent_names
+    edges = case.edges
     assert len(ctx_input_ids) == para_num and sent_num == len(sent_names)
     doc_input_ids = [] ### ++++++++
     doc_input_ids += question_input_ids
@@ -393,9 +394,9 @@ def case_to_features(case: Example, train_dev=True):
             sent_start_idx = sent_spans[sent_idx][0]
             ans_spans.append((sent_start_idx + ans_start, sent_start_idx + ans_end))
         # print('in', len(doc_input_ids))
-        return doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, answer_type_label
+        return doc_input_ids, query_spans, para_spans, sent_spans, edges, ans_spans, answer_type_label
     else:
-        return doc_input_ids, query_spans, para_spans, sent_spans
+        return doc_input_ids, query_spans, para_spans, sent_spans, edges
 #######################################################################
 def largest_valid_index(spans, limit):
     for idx in range(len(spans)):
@@ -403,12 +404,12 @@ def largest_valid_index(spans, limit):
             return idx
     return len(spans)
 
-def trim_input_span(doc_input_ids, query_spans, para_spans, sent_spans, limit, sep_token_id, ans_spans=None):
+def trim_input_span(doc_input_ids, query_spans, para_spans, sent_spans, limit, sep_token_id, edges, ans_spans=None):
     if len(doc_input_ids) <= limit:
         if ans_spans is not None:
-            return doc_input_ids, query_spans, para_spans, sent_spans, ans_spans
+            return doc_input_ids, query_spans, para_spans, sent_spans, edges, ans_spans
         else:
-            return doc_input_ids, query_spans, para_spans, sent_spans
+            return doc_input_ids, query_spans, para_spans, sent_spans, edges
     else:
         trim_doc_input_ids = []
         trim_doc_input_ids += doc_input_ids[:(limit - 1)]
@@ -418,6 +419,11 @@ def trim_input_span(doc_input_ids, query_spans, para_spans, sent_spans, limit, s
         largest_sent_idx = largest_valid_index(sent_spans, limit)
         trim_sent_spans = []
         trim_sent_spans += sent_spans[:largest_sent_idx]
+        trim_sent_num = len(trim_sent_spans)
+        trim_edges = []
+        for edge in edges:
+            if edge[0] < trim_sent_num and edge[2] < trim_sent_num:
+                trim_edges.append(edge)
         # ++++++++++++++++++++++++++++++++++++++++++++++++++++++
         largest_para_idx = largest_valid_index(para_spans, trim_seq_len)
         trim_para_spans = []
@@ -429,9 +435,9 @@ def trim_input_span(doc_input_ids, query_spans, para_spans, sent_spans, limit, s
             largest_ans_idx = largest_valid_index(ans_spans, limit)
             trim_ans_spans = []
             trim_ans_spans += ans_spans[:largest_ans_idx]
-            return trim_doc_input_ids, query_spans, trim_para_spans, trim_sent_spans, trim_ans_spans
+            return trim_doc_input_ids, query_spans, trim_para_spans, trim_sent_spans, trim_edges, trim_ans_spans
         else:
-            return trim_doc_input_ids, query_spans, trim_para_spans, trim_sent_spans
+            return trim_doc_input_ids, query_spans, trim_para_spans, trim_sent_spans, trim_edges
 
 #######################################################################
 def sent_state_feature_extractor(batch, input_state: Tensor):
