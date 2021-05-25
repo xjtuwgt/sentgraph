@@ -147,9 +147,6 @@ def selected_context_processing(row, tokenizer, selected_para_titles, is_roberta
     return norm_question, norm_answer, selected_contexts, supporting_facts_filtered, yes_no_flag, answer_found_flag
 #=======================================================================================================================
 def graph_construction(query_ner, ctx_sent_ners_list):
-    def cross_sent_link(query_ner, sent_ner_i, sent_ner_j):
-
-
     edges = {}
     sent_id = 0
     ctx_sent_ner2id_list = []
