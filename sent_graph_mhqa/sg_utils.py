@@ -184,17 +184,17 @@ def graph_construction(query_ner, ctx_sent_ners_list):
                     ner_i, send_id_i, _, _ = ner_id_i
                     ner_j, sent_id_j, _, _ = ner_id_j
                     if (intersection(ner_i, query_ner_)) and (intersection(ner_j, query_ner_)):
-                        print(ner_i)
-                        print(ner_j)
-                        print(query_ner_)
-                        print('_' * 20)
+                        # print(ner_i)
+                        # print(ner_j)
+                        # print(query_ner_)
+                        # print('_' * 20)
                         edges['q_s2s'].append((send_id_i, 1, sent_id_j))
                     if intersection(ner_i, ner_j):
                         edges['e_s2s'].append((send_id_i, 2, sent_id_j))
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    for key, value in edges.items():
-        if key == 'q_s2s' and len(value) > 0:
-            print('{}\t{}'.format(key, value))
+    # for key, value in edges.items():
+    #     if key == 'q_s2s' and len(value) > 0:
+    #         print('{}\t{}'.format(key, value))
     return edges
 #=======================================================================================================================
 def hotpot_sent_edge_tokenizer(para_file: str,
@@ -314,6 +314,9 @@ def hotpot_sent_edge_tokenizer(para_file: str,
             key = key + "_" + data_source_type
         ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         edges = graph_construction(query_ner=query_ner, ctx_sent_ners_list=ctx_sent_ner_list)
+        if len(query_ner) > 10:
+            print(query_ner)
+            print(norm_question)
         ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         example = Example(qas_id=key,
                           qas_type=qas_type,
