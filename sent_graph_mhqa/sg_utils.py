@@ -167,13 +167,11 @@ def graph_construction(query_ner, ctx_sent_ners_list):
     edges['in_s2s'] = []
     for para_id, sent_ner2ids in enumerate(ctx_sent_ner2id_list):
         sent_num = len(sent_ner2ids)
-        print(sent_num)
         for i in range(sent_num-1):
             sent_ner_i, send_id_i, _, _ = sent_ner2ids[i]
             for j in range(i+1, sent_num):
                 sent_ner_j, sent_id_j, _, _ = sent_ner2ids[j]
                 edges['in_s2s'].append((send_id_i, 0, sent_id_j))
-    print(len(edges['in_s2s']))
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     edges['q_s2s'] = []
     edges['e_s2s'] = []
@@ -195,9 +193,9 @@ def graph_construction(query_ner, ctx_sent_ners_list):
                     if intersection(ner_i, ner_j):
                         edges['e_s2s'].append((send_id_i, 2, sent_id_j))
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    for key, value in edges.items():
-        print('{}\t{}'.format(key, len(value)))
-        print('-' * 20)
+    # for key, value in edges.items():
+    #     print('{}\t{}'.format(key, len(value)))
+    #     print('-' * 20)
     return edges
 #=======================================================================================================================
 def hotpot_sent_edge_tokenizer(para_file: str,
