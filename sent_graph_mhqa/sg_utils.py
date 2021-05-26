@@ -420,11 +420,13 @@ def trim_input_span(doc_input_ids, query_spans, para_spans, sent_spans, limit, s
         trim_sent_spans = []
         trim_sent_spans += sent_spans[:largest_sent_idx]
         trim_sent_num = len(trim_sent_spans)
-        trim_edges = []
-        print(edges)
-        for edge in edges:
-            if edge[0] < trim_sent_num and edge[2] < trim_sent_num:
-                trim_edges.append(edge)
+        trim_edges = {}
+        for key, edge_values in edges.items():
+            trim_edge_values = []
+            for edge in edge_values:
+                if edge[0] < trim_sent_num and edge[2] < trim_sent_num:
+                    trim_edge_values.append(edge)
+            trim_edges[key] = trim_edge_values
         # ++++++++++++++++++++++++++++++++++++++++++++++++++++++
         largest_para_idx = largest_valid_index(para_spans, trim_seq_len)
         trim_para_spans = []
