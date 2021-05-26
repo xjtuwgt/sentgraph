@@ -99,7 +99,7 @@ def feature_extraction(args):
     encoder=encoder.to(args.device)
     encoder.eval()
 
-    graph_feature_dict = {}
+    graph_features = []
 
     for step, batch in tqdm(enumerate(hotpot_data_loader)):
         for key, value in batch.items():
@@ -121,12 +121,13 @@ def feature_extraction(args):
         for idx in range(batch_size):
             key = batch['ids'][idx]
             edges = batch['edges'][idx]
-            print(edges)
             sent_embed = sent_representations_np[idx].tolist()
             sent_mask = sent_mask_np[idx].tolist()
             example_i = hotpot_example_dict[key]
             sent_names = example_i.sent_names
             supp_sent_labels = supp_sent_np[idx].tolist()
+            graph_i = {'id': key, 'feat': sent_embed, 'edges': edges, 'mask': sent_mask, 'names': sent_names, 'label': supp_sent_labels}
+            graph_features.append(graph_i)
 
 
 
