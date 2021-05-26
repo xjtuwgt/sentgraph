@@ -101,7 +101,7 @@ def feature_extraction(args):
 
     graph_features = []
 
-    for step, batch in tqdm(enumerate(hotpot_data_loader)):
+    for step, batch in enumerate(tqdm(hotpot_data_loader)):
         for key, value in batch.items():
             if key not in {'ids', 'edges'}:
                 batch[key] = value.to(args.device)
