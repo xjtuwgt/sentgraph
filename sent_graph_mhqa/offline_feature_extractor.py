@@ -88,7 +88,7 @@ def feature_extraction(args):
     data_helper = DataHelper(sep_token_id=sep_token_id, config=args)
 
     dev_data_loader = data_helper.hotpot_val_dataloader
-
+    encoder=encoder.to(args.device)
     encoder.eval()
     for step, batch in enumerate(dev_data_loader):
         for key, value in batch.items():
