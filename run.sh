@@ -26,8 +26,8 @@ download() {
 }
 
 preprocess() {
-    INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor" "hotpot_train_v1.1.json;train")
-#    INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor")
+#    INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor" "hotpot_train_v1.1.json;train")
+    INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor")
     for input in ${INPUTS[*]}; do
         INPUT_FILE=$(echo $input | cut -d ";" -f 1)
         DATA_TYPE=$(echo $input | cut -d ";" -f 2)
@@ -68,6 +68,8 @@ preprocess() {
         echo "6. Dump features"
         # Input: $INPUT_FILE, long_multihop_para.json, ner.json
         python sent_graph_mhqa/sent_graph_dump_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --ranker long --data_type $DATA_TYPE --max_para_num $SELECTEED_DOC_NUM
+
+
 
     done
 
