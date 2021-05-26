@@ -111,3 +111,7 @@ def feature_extraction(args):
             context_emb = outputs[0]
             sent_representations = sent_state_feature_extractor(batch=batch, input_state=context_emb)
             print(sent_representations.shape)
+
+if __name__ == '__main__':
+    args = parse_args()
+    feature_extraction(args=args)
