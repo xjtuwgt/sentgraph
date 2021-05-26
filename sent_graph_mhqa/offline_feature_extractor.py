@@ -88,7 +88,10 @@ def feature_extraction(args):
     data_helper = DataHelper(sep_token_id=sep_token_id, config=args)
 
     dev_data_loader = data_helper.hotpot_val_dataloader
-    dev_data_example_dict = data_helper.dev_example_dict
+    dev_example_dict = data_helper.dev_example_dict
+
+    train_data_loader = data_helper.hotpot_train_dataloader
+    train_example_dict = data_helper.train_example_dict
 
     encoder=encoder.to(args.device)
     encoder.eval()
@@ -109,9 +112,9 @@ def feature_extraction(args):
             sent_representations = sent_state_feature_extractor(batch=batch, input_state=context_emb)
 
         batch_size = sent_representations.shape[0]
-        # sent_representations_np = sent_representations.detach().cpu().numpy()
+        sent_representations_np = sent_representations.detach().cpu().numpy()
 
-        print(sent_representations.shape)
+        print(sent_representations_np.shape)
 
 if __name__ == '__main__':
     args = parse_args()
