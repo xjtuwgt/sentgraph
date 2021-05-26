@@ -106,4 +106,5 @@ def feature_extraction(args):
 
 if __name__ == '__main__':
     args = parse_args()
+    args = complete_default_train_parser(args=args)
     feature_extraction(args=args)
