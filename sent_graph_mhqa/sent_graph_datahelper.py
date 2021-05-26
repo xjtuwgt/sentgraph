@@ -104,7 +104,7 @@ class DataHelper:
                                 sep_token_id=self.sep_token_id)
         dataloader = DataLoader(
             dataset=dev_data,
-            batch_size=self.config.eval_batch_size,
+            batch_size=self.config.batch_size,
             shuffle=False,
             num_workers=max(1, self.config.cpu_num // 2),
             collate_fn=HotpotDataset.collate_fn
