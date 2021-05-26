@@ -88,8 +88,13 @@ def feature_extraction(args):
     data_helper = DataHelper(sep_token_id=sep_token_id, config=args)
 
     dev_data_loader = data_helper.hotpot_val_dataloader
+    dev_data_example_dict = data_helper.dev_example_dict
+
     encoder=encoder.to(args.device)
     encoder.eval()
+
+    graph_feature_dict = {}
+
     for step, batch in enumerate(dev_data_loader):
         for key, value in batch.items():
             if key not in {'ids', 'edges'}:
@@ -102,7 +107,11 @@ def feature_extraction(args):
             outputs = encoder(**inputs)
             context_emb = outputs[0]
             sent_representations = sent_state_feature_extractor(batch=batch, input_state=context_emb)
-            print(sent_representations.shape)
+
+        batch_size = sent_representations.shape[0]
+        sent_representations_np = sent_representations.detach().cpu().numpy()
+
+        print(sent_representations_np.shape)
 
 if __name__ == '__main__':
     args = parse_args()
