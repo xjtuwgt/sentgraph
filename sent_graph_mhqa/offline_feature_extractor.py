@@ -129,7 +129,7 @@ def feature_extraction(args):
             sent_names = example_i.sent_names
             supp_sent_labels = supp_sent_np[idx].tolist()
             sent_num = sent_num_list[idx]
-            graph_i = {'id': key, 'feat': sent_embed, 'number': sent_num, 'edges': edges, 'mask': sent_mask, 'names': sent_names, 'label': supp_sent_labels}
+            graph_i = {'id': key, 'feat': sent_embed, 'num': sent_num, 'edge': edges, 'mask': sent_mask, 'name': sent_names, 'label': supp_sent_labels}
             graph_features.append(graph_i)
     return graph_features
 
