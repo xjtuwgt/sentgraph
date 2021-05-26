@@ -41,6 +41,7 @@ def parse_args():
     parser.add_argument('--input_model_path', default=None, type=str, required=True)
     parser.add_argument("--encoder_ckpt", default='encoder.pkl', type=str)
     parser.add_argument("--batch_size", default=16, type=int)
+    parser.add_argument("--data_type", type=str, required=True)
     # encoder
     parser.add_argument("--frozen_layer_number", default=0, type=int)
     parser.add_argument("--fine_tuned_encoder", default=None, type=str)
@@ -87,18 +88,19 @@ def feature_extraction(args):
     sep_token_id = tokenizer.sep_token_id
     data_helper = DataHelper(sep_token_id=sep_token_id, config=args)
 
-    dev_data_loader = data_helper.hotpot_val_dataloader
-    dev_example_dict = data_helper.dev_example_dict
-
-    train_data_loader = data_helper.hotpot_train_dataloader
-    train_example_dict = data_helper.train_example_dict
+    if 'train' in args.data_type:
+        hotpot_data_loader = data_helper.hotpot_train_dataloader
+        hotpot_example_dict = data_helper.train_example_dict
+    else:
+        hotpot_data_loader = data_helper.hotpot_val_dataloader
+        hotpot_example_dict = data_helper.dev_example_dict
 
     encoder=encoder.to(args.device)
     encoder.eval()
 
     graph_feature_dict = {}
 
-    for step, batch in enumerate(dev_data_loader):
+    for step, batch in enumerate(hotpot_data_loader):
         for key, value in batch.items():
             if key not in {'ids', 'edges'}:
                 batch[key] = value.to(args.device)
