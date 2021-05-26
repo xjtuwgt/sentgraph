@@ -1,6 +1,7 @@
 import argparse
 from model_envs import MODEL_CLASSES
-from envs import OUTPUT_FOLDER
+import gzip
+import pickle
 from sent_graph_mhqa.sent_graph_datahelper import DataHelper
 from sent_graph_mhqa.sg_utils import sent_state_feature_extractor
 from utils.gpu_utils import single_free_cuda
@@ -134,3 +135,8 @@ if __name__ == '__main__':
     args = parse_args()
     args = complete_default_train_parser(args=args)
     graph_features = feature_extraction(args=args)
+    output_file_name = join(args.output_dir, 'graph_with_feature.pickle')
+    print('Graph example file name = {}'.format(output_file_name))
+    with gzip.open(output_file_name, 'wb') as fout:
+        pickle.dump(graph_features, fout)
+    print('Saving {} examples in {}'.format(len(graph_features), output_file_name))
