@@ -76,7 +76,7 @@ def complete_default_train_parser(args):
 
 def feature_extraction(args):
     encoder, _ = load_encoder_model(args.encoder_name_or_path, args.model_type)
-    encoder_path = join(args.fine_tuned_encoder_path, args.fine_tuned_encoder, 'encoder.pkl')
+    encoder_path = join(args.input_model_path, 'encoder.pkl')
     print("Loading encoder from: {}".format(encoder_path))
     encoder.load_state_dict(torch.load(encoder_path))
     print("Loading encoder completed")
