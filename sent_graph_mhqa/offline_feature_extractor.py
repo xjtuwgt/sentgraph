@@ -115,7 +115,20 @@ def feature_extraction(args):
             sent_representations = sent_state_feature_extractor(batch=batch, input_state=context_emb)
 
         batch_size = sent_representations.shape[0]
+        supp_sent_np = batch['is_support'].cpu().numpy()
         sent_representations_np = sent_representations.detach().cpu().numpy()
+        sent_mask_np = batch['sent_mask'].cpu().numpy()
+        for idx in range(batch_size):
+            key = batch['ids'][idx]
+            edges = batch['edges'][idx]
+            print(edges)
+            sent_embed = sent_representations_np[idx].tolist()
+            sent_mask = sent_mask_np[idx].tolist()
+            example_i = hotpot_example_dict[key]
+            sent_names = example_i.sent_names
+            supp_sent_labels = supp_sent_np[idx].tolist()
+
+
 
         print(sent_representations_np.shape)
 
