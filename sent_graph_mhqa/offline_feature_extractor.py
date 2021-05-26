@@ -6,6 +6,7 @@ from sent_graph_mhqa.sg_utils import sent_state_feature_extractor
 from utils.gpu_utils import single_free_cuda
 from os.path import join
 import torch
+from tqdm import tqdm
 
 def boolean_string(s):
     if s.lower() not in {'false', 'true'}:
@@ -100,7 +101,7 @@ def feature_extraction(args):
 
     graph_feature_dict = {}
 
-    for step, batch in enumerate(hotpot_data_loader):
+    for step, batch in tqdm(enumerate(hotpot_data_loader)):
         for key, value in batch.items():
             if key not in {'ids', 'edges'}:
                 batch[key] = value.to(args.device)

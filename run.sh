@@ -71,9 +71,6 @@ preprocess() {
 
         echo "7. Sentence representation extraction"
         python sent_graph_mhqa/offline_feature_extractor.py --encoder_name_or_path albert-xxlarge-v2 --model_type albert --input_model_path $DATA_ROOT/models/finetuned/QA --data_type $DATA_TYPE
-
-
-
     done
 
 }
