@@ -109,9 +109,9 @@ def feature_extraction(args):
             sent_representations = sent_state_feature_extractor(batch=batch, input_state=context_emb)
 
         batch_size = sent_representations.shape[0]
-        sent_representations_np = sent_representations.detach().cpu().numpy()
+        # sent_representations_np = sent_representations.detach().cpu().numpy()
 
-        print(sent_representations_np.shape)
+        print(sent_representations.shape)
 
 if __name__ == '__main__':
     args = parse_args()
