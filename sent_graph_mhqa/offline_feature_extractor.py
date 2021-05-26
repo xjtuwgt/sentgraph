@@ -28,7 +28,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--output_dir',
                         type=str,
-                        default=OUTPUT_FOLDER,
+                        required=True,
                         help='Directory to save model and summaries')
     # model
     parser.add_argument("--max_seq_length", default=512, type=int)
@@ -128,12 +128,9 @@ def feature_extraction(args):
             supp_sent_labels = supp_sent_np[idx].tolist()
             graph_i = {'id': key, 'feat': sent_embed, 'edges': edges, 'mask': sent_mask, 'names': sent_names, 'label': supp_sent_labels}
             graph_features.append(graph_i)
-
-
-
-        print(sent_representations_np.shape)
+    return graph_features
 
 if __name__ == '__main__':
     args = parse_args()
     args = complete_default_train_parser(args=args)
-    feature_extraction(args=args)
+    graph_features = feature_extraction(args=args)
