@@ -1,9 +1,9 @@
 import argparse
-from envs import OUTPUT_FOLDER, DATASET_FOLDER, PRETRAINED_MODEL_FOLDER
 from model_envs import MODEL_CLASSES
+from envs import OUTPUT_FOLDER
 from sent_graph_mhqa.sent_graph_datahelper import DataHelper
+from sent_graph_mhqa.sg_utils import sent_state_feature_extractor
 from utils.gpu_utils import single_free_cuda
-import os
 from os.path import join
 import torch
 
@@ -20,17 +20,7 @@ def load_encoder_model(encoder_name_or_path, model_type):
     config = config_class.from_pretrained(encoder_name_or_path)
     if config is None:
         raise ValueError(f'config.json is not found at {encoder_name_or_path}')
-
-    # check if is a path
-    if os.path.exists(encoder_name_or_path):
-        if os.path.isfile(os.path.join(encoder_name_or_path, 'pytorch_model.bin')):
-            encoder_file = os.path.join(encoder_name_or_path, 'pytorch_model.bin')
-        else:
-            encoder_file = os.path.join(encoder_name_or_path, 'encoder.pkl')
-        encoder = model_encoder.from_pretrained(encoder_file, config=config)
-    else:
-        encoder = model_encoder.from_pretrained(encoder_name_or_path, config=config)
-
+    encoder = model_encoder(config)
     return encoder, config
 
 def parse_args():
@@ -40,13 +30,6 @@ def parse_args():
                         type=str,
                         default=OUTPUT_FOLDER,
                         help='Directory to save model and summaries')
-    parser.add_argument("--dev_file",
-                        type=str,
-                        default=join(DATASET_FOLDER, 'data_raw', 'hotpot_dev_distractor_v1.json'))
-    parser.add_argument("--train_file",
-                        type=str,
-                        default=join(DATASET_FOLDER, 'data_raw', 'hotpot_train_v1.1.json'))
-
     # model
     parser.add_argument("--max_seq_length", default=512, type=int)
     parser.add_argument("--max_query_length", default=50, type=int)
@@ -67,7 +50,6 @@ def parse_args():
     # encoder
     parser.add_argument("--frozen_layer_number", default=0, type=int)
     parser.add_argument("--fine_tuned_encoder", default=None, type=str)
-    parser.add_argument("--fine_tuned_encoder_path", default=PRETRAINED_MODEL_FOLDER, type=str)
 
     # train-dev data type
     parser.add_argument("--daug_type", default='long_low', type=str, help="Train Data augumentation type.")
@@ -91,7 +73,6 @@ def parse_args():
     args = parser.parse_args()
     return args
 
-
 def complete_default_train_parser(args):
     if torch.cuda.is_available():
         device_ids, _ = single_free_cuda()
@@ -101,10 +82,7 @@ def complete_default_train_parser(args):
     args.device = device
     args.max_doc_len = 512
     args.input_dim = 768 if 'base' in args.encoder_name_or_path else (4096 if 'albert' in args.encoder_name_or_path else 1024)
-
     return args
-
-
 
 def feature_extraction(args):
     encoder, _ = load_encoder_model(args.encoder_name_or_path, args.model_type)
@@ -128,7 +106,9 @@ def feature_extraction(args):
 
         inputs = {'input_ids': batch['context_idxs'],
                   'attention_mask': batch['context_mask'],
-                  'token_type_ids': batch['segment_idxs'] if args.model_type in ['bert',
-                                                                                        'xlnet'] else None}  # XLM don't use segment_ids
+                  'token_type_ids': batch['segment_idxs'] if args.model_type in ['bert', 'xlnet'] else None}  # XLM don't use segment_ids
         with torch.no_grad():
             outputs = encoder(**inputs)
+            context_emb = outputs[0]
+            sent_representations = sent_state_feature_extractor(batch=batch, input_state=context_emb)
+            print(sent_representations.shape)
