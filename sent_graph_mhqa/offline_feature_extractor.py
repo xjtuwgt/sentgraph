@@ -25,7 +25,6 @@ def load_encoder_model(encoder_name_or_path, model_type):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-
     parser.add_argument('--output_dir',
                         type=str,
                         default=OUTPUT_FOLDER,
