@@ -421,6 +421,7 @@ def trim_input_span(doc_input_ids, query_spans, para_spans, sent_spans, limit, s
         trim_sent_spans += sent_spans[:largest_sent_idx]
         trim_sent_num = len(trim_sent_spans)
         trim_edges = []
+        print(edges)
         for edge in edges:
             if edge[0] < trim_sent_num and edge[2] < trim_sent_num:
                 trim_edges.append(edge)
