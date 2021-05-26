@@ -32,19 +32,15 @@ def parse_args():
     # model
     parser.add_argument("--max_seq_length", default=512, type=int)
     parser.add_argument("--max_query_length", default=50, type=int)
+
     parser.add_argument("--encoder_name_or_path",
-                        default='roberta-large',
+                        default='albert-xxlarge-v2',
                         type=str,
-                        # help="Path to pre-trained model or shortcut name selected in the list: " + ", ".join(ALL_MODELS))
                         help="Path to pre-trained model or shortcut name selected")
-    parser.add_argument("--do_lower_case",
-                        action='store_true',
-                        help="Set this flag if you are using an uncased model.")
-    parser.add_argument("--per_gpu_train_batch_size",
-                        # default=8,
-                        default=4,
-                        type=int,
-                        help="Batch size per GPU/CPU for training.")
+    parser.add_argument("--model_type", default='albert', type=str, help="alber reader model")
+    parser.add_argument('--input_model_path', default=None, type=str, required=True)
+    parser.add_argument("--encoder_ckpt", default='encoder.pkl', type=str)
+    parser.add_argument("--model_ckpt", default='model.pkl', type=str)
     parser.add_argument("--batch_size", default=16, type=int)
     # encoder
     parser.add_argument("--frozen_layer_number", default=0, type=int)

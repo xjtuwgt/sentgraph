@@ -70,7 +70,7 @@ preprocess() {
 #        python sent_graph_mhqa/sent_graph_dump_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --ranker long --data_type $DATA_TYPE --max_para_num $SELECTEED_DOC_NUM
 
         echo "7. Sentence representation extraction"
-        python sent_graph_mhqa/offline_feature_extractor.py --model_name_or_path albert-xxlarge-v2 --do_lower_case --model_type albert --tokenizer_name albert-xxlarge-v2
+        python sent_graph_mhqa/offline_feature_extractor.py --model_name_or_path albert-xxlarge-v2 --do_lower_case --model_type albert --input_model_path $DATA_ROOT/models/finetuned/QA
 
 
 
