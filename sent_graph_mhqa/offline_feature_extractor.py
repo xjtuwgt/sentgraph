@@ -59,6 +59,7 @@ def parse_args():
     parser.add_argument("--max_para_num", default=4, type=int)
     parser.add_argument("--max_sent_num", default=40, type=int)
     parser.add_argument("--max_entity_num", default=60, type=int)
+    parser.add_argument("--cpu_num", default=8, type=int)
 
     args = parser.parse_args()
     return args
