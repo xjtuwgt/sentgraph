@@ -117,6 +117,7 @@ def feature_extraction(args):
 
         batch_size = sent_representations.shape[0]
         supp_sent_np = batch['is_support'].cpu().numpy()
+        sent_num_list = batch['sent_num'].cpu().numpy().tolist()
         sent_representations_np = sent_representations.detach().cpu().numpy()
         sent_mask_np = batch['sent_mask'].cpu().numpy()
         for idx in range(batch_size):
@@ -127,7 +128,9 @@ def feature_extraction(args):
             example_i = hotpot_example_dict[key]
             sent_names = example_i.sent_names
             supp_sent_labels = supp_sent_np[idx].tolist()
-            graph_i = {'id': key, 'feat': sent_embed, 'edges': edges, 'mask': sent_mask, 'names': sent_names, 'label': supp_sent_labels}
+            sent_num = sent_num_list[idx]
+            print(sent_num)
+            graph_i = {'id': key, 'feat': sent_embed, 'number': sent_num, 'edges': edges, 'mask': sent_mask, 'names': sent_names, 'label': supp_sent_labels}
             graph_features.append(graph_i)
     return graph_features
 
