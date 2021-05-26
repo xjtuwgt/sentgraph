@@ -40,7 +40,6 @@ def parse_args():
     parser.add_argument("--model_type", default='albert', type=str, help="alber reader model")
     parser.add_argument('--input_model_path', default=None, type=str, required=True)
     parser.add_argument("--encoder_ckpt", default='encoder.pkl', type=str)
-    parser.add_argument("--model_ckpt", default='model.pkl', type=str)
     parser.add_argument("--batch_size", default=16, type=int)
     # encoder
     parser.add_argument("--frozen_layer_number", default=0, type=int)
@@ -49,10 +48,6 @@ def parse_args():
     # train-dev data type
     parser.add_argument("--daug_type", default='long_low', type=str, help="Train Data augumentation type.")
     parser.add_argument("--devf_type", default='long_low', type=str, help="Dev data type")
-
-    # eval
-    parser.add_argument("--encoder_ckpt", default=None, type=str)
-    parser.add_argument("--model_ckpt", default=None, type=str)
 
     ##################################
     # learning and log
