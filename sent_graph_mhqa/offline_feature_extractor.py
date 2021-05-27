@@ -8,6 +8,7 @@ from sent_graph_mhqa.sg_utils import sent_state_feature_extractor
 from utils.gpu_utils import single_free_cuda
 from os.path import join
 import torch
+from time import time
 from tqdm import tqdm
 
 def boolean_string(s):
@@ -140,9 +141,10 @@ def feature_extraction(args):
             if len(graph_features) % args.save_batch_size == 0:
                 output_file_name = join(args.output_dir, 'graph_with_feature_{}.pickle'.format(save_idx))
                 print('Graph example file name = {}'.format(output_file_name))
+                start_time = time()
                 with gzip.open(output_file_name, 'wb') as fout:
                     pickle.dump(graph_features, fout)
-                print('Saving {} examples in {}'.format(len(graph_features), output_file_name))
+                print('Saving {} examples to {} in {:.4f} seconds'.format(len(graph_features), output_file_name, time() - start_time))
                 total_graph_num = total_graph_num + len(graph_features)
                 save_idx = save_idx + 1
                 graph_features = []
