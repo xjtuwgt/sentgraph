@@ -123,12 +123,13 @@ def feature_extraction(args):
         for idx in range(batch_size):
             key = batch['ids'][idx]
             edges = batch['edges'][idx]
-            sent_embed = sent_representations_np[idx].tolist()
+            sent_num = sent_num_list[idx]
+            assert sent_num > 0
+            sent_embed = sent_representations_np[idx][:sent_num].tolist()
             sent_mask = sent_mask_np[idx].tolist()
             example_i = hotpot_example_dict[key]
             sent_names = example_i.sent_names
             supp_sent_labels = supp_sent_np[idx].tolist()
-            sent_num = sent_num_list[idx]
             graph_i = {'id': key, 'feat': sent_embed, 'num': sent_num, 'edge': edges, 'mask': sent_mask, 'name': sent_names, 'label': supp_sent_labels}
             graph_features.append(graph_i)
     return graph_features
