@@ -131,10 +131,10 @@ def feature_extraction(args):
             sent_num = sent_num_list[idx]
             assert sent_num > 0
             sent_embed = sent_representations_np[idx][:sent_num]
-            sent_mask = sent_mask_np[idx].tolist()
+            sent_mask = sent_mask_np[idx]
             example_i = hotpot_example_dict[key]
             sent_names = example_i.sent_names
-            supp_sent_labels = supp_sent_np[idx].tolist()
+            supp_sent_labels = supp_sent_np[idx]
             graph_i = {'id': key, 'feat': sent_embed, 'num': sent_num, 'edge': edges, 'mask': sent_mask, 'name': sent_names, 'label': supp_sent_labels}
             graph_features.append(graph_i)
             if len(graph_features) % args.save_batch_size == 0:
