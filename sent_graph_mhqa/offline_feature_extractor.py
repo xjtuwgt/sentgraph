@@ -2,6 +2,7 @@ import argparse
 from model_envs import MODEL_CLASSES
 import gzip
 import pickle
+import os
 from sent_graph_mhqa.sent_graph_datahelper import DataHelper
 from sent_graph_mhqa.sg_utils import sent_state_feature_extractor
 from utils.gpu_utils import single_free_cuda
@@ -62,6 +63,7 @@ def parse_args():
     parser.add_argument("--max_para_num", default=4, type=int)
     parser.add_argument("--max_sent_num", default=40, type=int)
     parser.add_argument("--max_entity_num", default=60, type=int)
+    parser.add_argument("--save_batch_size", default=100, type=int)
     parser.add_argument("--cpu_num", default=8, type=int)
 
     args = parser.parse_args()
@@ -74,6 +76,9 @@ def complete_default_train_parser(args):
     else:
         device = torch.device('cpu')
     args.device = device
+    graph_feature_output_folder = os.path.join(args.output_dir, 'graph')
+    os.makedirs(graph_feature_output_folder, exist_ok=True)
+    args.output_dir = graph_feature_output_folder
     args.max_doc_len = 512
     args.input_dim = 768 if 'base' in args.encoder_name_or_path else (4096 if 'albert' in args.encoder_name_or_path else 1024)
     return args
@@ -99,9 +104,9 @@ def feature_extraction(args):
 
     encoder=encoder.to(args.device)
     encoder.eval()
-
     graph_features = []
-
+    save_idx = 0
+    total_graph_num = 0
     for step, batch in enumerate(tqdm(hotpot_data_loader)):
         for key, value in batch.items():
             if key not in {'ids', 'edges'}:
@@ -132,14 +137,26 @@ def feature_extraction(args):
             supp_sent_labels = supp_sent_np[idx].tolist()
             graph_i = {'id': key, 'feat': sent_embed, 'num': sent_num, 'edge': edges, 'mask': sent_mask, 'name': sent_names, 'label': supp_sent_labels}
             graph_features.append(graph_i)
+            if len(graph_features) % args.save_batch_size == 0:
+                output_file_name = join(args.output_dir, 'graph_with_feature_{}.pickle'.format(save_idx))
+                print('Graph example file name = {}'.format(output_file_name))
+                with gzip.open(output_file_name, 'wb') as fout:
+                    pickle.dump(graph_features, fout)
+                print('Saving {} examples in {}'.format(len(graph_features), output_file_name))
+                total_graph_num = total_graph_num + len(graph_features)
+                save_idx = save_idx + 1
+                graph_features = []
+    if len(graph_features) > 0:
+        output_file_name = join(args.output_dir, 'graph_with_feature_{}.pickle'.format(save_idx))
+        print('Graph example file name = {}'.format(output_file_name))
+        with gzip.open(output_file_name, 'wb') as fout:
+            pickle.dump(graph_features, fout)
+        print('Saving {} examples in {}'.format(len(graph_features), output_file_name))
+        total_graph_num = total_graph_num + len(graph_features)
+    print('Total graph number = {}/{}'.format(total_graph_num, save_idx))
     return graph_features
 
 if __name__ == '__main__':
     args = parse_args()
     args = complete_default_train_parser(args=args)
-    graph_features = feature_extraction(args=args)
-    output_file_name = join(args.output_dir, 'graph_with_feature.pickle')
-    print('Graph example file name = {}'.format(output_file_name))
-    with gzip.open(output_file_name, 'wb') as fout:
-        pickle.dump(graph_features, fout)
-    print('Saving {} examples in {}'.format(len(graph_features), output_file_name))
+    feature_extraction(args=args)
