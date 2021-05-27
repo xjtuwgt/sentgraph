@@ -130,7 +130,7 @@ def feature_extraction(args):
             edges = batch['edges'][idx]
             sent_num = sent_num_list[idx]
             assert sent_num > 0
-            sent_embed = sent_representations_np[idx][:sent_num].tolist()
+            sent_embed = sent_representations_np[idx][:sent_num]
             sent_mask = sent_mask_np[idx].tolist()
             example_i = hotpot_example_dict[key]
             sent_names = example_i.sent_names
