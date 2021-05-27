@@ -445,12 +445,15 @@ def trim_input_span(doc_input_ids, query_spans, para_spans, sent_spans, limit, s
 #######################################################################
 def sent_state_feature_extractor(batch, input_state: Tensor):
     sent_start, sent_end = batch['sent_start'], batch['sent_end']
+    sent_nums = batch['sent_num']
     assert (sent_start.max() < input_state.shape[1]) \
            and (sent_end.max() < input_state.shape[1]), '{}\t{}\t{}'.format(sent_start, sent_end, input_state.shape[1])
     batch_size, sent_num = sent_start.shape[0], sent_start.shape[1]
     for idx in range(batch_size):
         sent_start_i = sent_start[idx]
         sent_end_i = sent_end[idx]
+        sent_num_i = sent_nums[idx]
+        print(sent_num_i)
         print(sent_start_i)
         print(sent_end_i)
         print(sent_start_i.shape)
