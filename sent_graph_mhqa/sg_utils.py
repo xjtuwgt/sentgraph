@@ -449,6 +449,9 @@ def sent_state_feature_extractor(batch, input_state: Tensor):
            and (sent_end.max() < input_state.shape[1]), '{}\t{}\t{}'.format(sent_start, sent_end, input_state.shape[1])
     batch_size, sent_num = sent_start.shape[0], sent_start.shape[1]
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    print(input_state.shape)
+    print(sent_start.shape)
+    print(sent_end.shape)
     sent_batch_idx = torch.arange(0, batch_size, device=input_state.device).view(batch_size, 1).repeat(1, sent_num)
     sent_start_output = input_state[sent_batch_idx, sent_start]
     sent_end_output = input_state[sent_batch_idx, sent_end]
