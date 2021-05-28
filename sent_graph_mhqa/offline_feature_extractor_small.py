@@ -31,7 +31,6 @@ def load_encoder_model(encoder_name_or_path, model_type):
 def parse_args():
     parser = argparse.ArgumentParser()
     ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    parser.add_argument('--testf_type', default=None, type=str, required=True)
     parser.add_argument('--input_dir',
                         type=str,
                         required=True,
@@ -94,6 +93,7 @@ def parse_args():
     parser.add_argument('--test_log_steps', default=10, type=int)
     parser.add_argument('--cpu_num', default=2, type=int)
     ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    args = parser.parse_args()
     return args
 
 def complete_default_train_parser(args):
@@ -112,7 +112,6 @@ def complete_default_train_parser(args):
 
 def feature_extraction(args):
     model = UnifiedHGNModel(config=args)
-
     _, _, tokenizer_class = MODEL_CLASSES[args.model_type]
     tokenizer = tokenizer_class.from_pretrained(args.encoder_name_or_path, do_lower_case=True)
     sep_token_id = tokenizer.sep_token_id
