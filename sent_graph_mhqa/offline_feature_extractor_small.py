@@ -89,6 +89,7 @@ def parse_args():
     parser.add_argument("--data_type", type=str, required=True)
     parser.add_argument("--ans_window_size", default=15, type=int)  ##15 --> 30
     parser.add_argument('--test_log_steps', default=10, type=int)
+    parser.add_argument("--save_batch_size", default=4000, type=int)
     parser.add_argument('--cpu_num', default=8, type=int)
     ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     args = parser.parse_args()
