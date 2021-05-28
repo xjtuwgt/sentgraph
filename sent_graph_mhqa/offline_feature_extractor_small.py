@@ -103,7 +103,7 @@ def complete_default_train_parser(args):
     else:
         device = torch.device('cpu')
     args.device = device
-    graph_feature_output_folder = os.path.join(args.output_dir, 'graph')
+    graph_feature_output_folder = os.path.join(args.output_dir, 'graph_small')
     os.makedirs(graph_feature_output_folder, exist_ok=True)
     args.output_dir = graph_feature_output_folder
     args.max_doc_len = 512
