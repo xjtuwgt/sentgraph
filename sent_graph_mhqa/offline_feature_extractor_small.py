@@ -82,6 +82,7 @@ def parse_args():
                         help="Path to pre-trained model or shortcut name selected")
     parser.add_argument("--model_type", default='albert', type=str, help="alber reader model")
     parser.add_argument('--gpus', default=1, type=int)
+    parser.add_argument('--cached_dir', default=None, type=str)
     parser.add_argument('--batch_size', default=16, type=int)
     parser.add_argument("--data_type", type=str, required=True)
     parser.add_argument("--ans_window_size", default=15, type=int)  ##15 --> 30
