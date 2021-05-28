@@ -99,6 +99,11 @@ def complete_default_train_parser(args):
     else:
         device = torch.device('cpu')
     args.device = device
+    args.num_gnn_layers = int(args.gnn.split(':')[1].split(',')[0])
+    args.num_gnn_heads = int(args.gnn.split(':')[1].split(',')[1])
+    if len(args.mask_edge_types):
+        args.mask_edge_types = list(map(int, args.mask_edge_types.split(',')))
+    # TODO: only support albert-xxlarge-v2 now
     graph_feature_output_folder = os.path.join(args.output_dir, 'graph_small')
     os.makedirs(graph_feature_output_folder, exist_ok=True)
     args.output_dir = graph_feature_output_folder
