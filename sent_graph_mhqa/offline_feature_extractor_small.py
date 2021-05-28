@@ -31,10 +31,6 @@ def load_encoder_model(encoder_name_or_path, model_type):
 def parse_args():
     parser = argparse.ArgumentParser()
     ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    parser.add_argument('--input_dir',
-                        type=str,
-                        required=True,
-                        help='Directory to save model and summaries')
     parser.add_argument('--output_dir',
                         type=str,
                         required=True,
@@ -78,8 +74,6 @@ def parse_args():
     parser.add_argument("--ctx_attn_hidden_dim", type=int, default=300)
     parser.add_argument("--bi_attn_drop", type=float, default=0.3)
     parser.add_argument("--hidden_dim", type=int, default=300)
-    # ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    parser.add_argument('--topk_para_num', default=3, type=int, required=True)
     ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # parser.add_argument("--eval_ckpt", default=None, type=str, required=True, help="evaluation checkpoint")
     parser.add_argument("--encoder_name_or_path",
@@ -88,10 +82,11 @@ def parse_args():
                         help="Path to pre-trained model or shortcut name selected")
     parser.add_argument("--model_type", default='albert', type=str, help="alber reader model")
     parser.add_argument('--gpus', default=1, type=int)
-    parser.add_argument('--test_batch_size', default=2, type=int)
+    parser.add_argument('--batch_size', default=16, type=int)
+    parser.add_argument("--data_type", type=str, required=True)
     parser.add_argument("--ans_window_size", default=15, type=int)  ##15 --> 30
     parser.add_argument('--test_log_steps', default=10, type=int)
-    parser.add_argument('--cpu_num', default=2, type=int)
+    parser.add_argument('--cpu_num', default=8, type=int)
     ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     args = parser.parse_args()
     return args
