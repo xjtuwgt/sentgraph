@@ -142,11 +142,8 @@ def feature_extraction(args):
             if key not in {'ids', 'edges'}:
                 batch[key] = value.to(args.device)
 
-        inputs = {'input_ids': batch['context_idxs'],
-                  'attention_mask': batch['context_mask'],
-                  'token_type_ids': batch['segment_idxs'] if args.model_type in ['bert', 'xlnet'] else None}  # XLM don't use segment_ids
         with torch.no_grad():
-            outputs = model(**inputs)
+            outputs = model(batch)
             sent_representations = sent_state_feature_extractor(batch=batch, input_state=outputs)
 
         batch_size = sent_representations.shape[0]
