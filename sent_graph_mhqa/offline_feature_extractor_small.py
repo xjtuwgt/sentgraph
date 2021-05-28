@@ -60,6 +60,8 @@ def parse_args():
     parser.add_argument("--lstm_layer", type=int, default=1)  ###++++++
     parser.add_argument('--graph_residual', type=boolean_string, default='True',
                         help='whether use residual connection in GAT')  ##+++++++++
+    parser.add_argument("--daug_type", default='long_low', type=str, help="Train Data augumentation type.")
+    parser.add_argument("--devf_type", default='long_low', type=str, help="Dev data type")
 
     parser.add_argument("--max_para_num", default=5, type=int)
     parser.add_argument("--max_sent_num", default=40, type=int)
