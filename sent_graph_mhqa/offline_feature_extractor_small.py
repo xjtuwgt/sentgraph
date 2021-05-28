@@ -109,6 +109,11 @@ def complete_default_train_parser(args):
     args.output_dir = graph_feature_output_folder
     args.max_doc_len = 512
     args.input_dim = 768 if 'base' in args.encoder_name_or_path else (4096 if 'albert' in args.encoder_name_or_path else 1024)
+
+    encoder_path = join(args.input_model_path, args.encoder_ckpt)  ## replace encoder.pkl as encoder
+    model_path = join(args.input_model_path, args.model_ckpt)  ## replace encoder.pkl as encoder
+    args.encoder_path = encoder_path
+    args.model_path = model_path
     return args
 
 def feature_extraction(args):
