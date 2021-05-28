@@ -449,19 +449,19 @@ def sent_state_feature_extractor(batch, input_state: Tensor):
     assert (sent_start.max() < input_state.shape[1]) \
            and (sent_end.max() < input_state.shape[1]), '{}\t{}\t{}'.format(sent_start, sent_end, input_state.shape[1])
     batch_size, sent_num = sent_start.shape[0], sent_start.shape[1]
-    for idx in range(batch_size):
-        sent_start_i = sent_start[idx]
-        sent_end_i = sent_end[idx]
-        sent_num_i = sent_nums[idx]
-        print(sent_num_i)
-        print(sent_start_i)
-        print(sent_end_i)
-        print(sent_start_i.shape)
-        print(sent_end_i.shape)
-    # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    print(input_state.shape)
-    print(sent_start.shape)
-    print(sent_end.shape)
+    # for idx in range(batch_size):
+    #     sent_start_i = sent_start[idx]
+    #     sent_end_i = sent_end[idx]
+    #     sent_num_i = sent_nums[idx]
+    #     print(sent_num_i)
+    #     print(sent_start_i)
+    #     print(sent_end_i)
+    #     print(sent_start_i.shape)
+    #     print(sent_end_i.shape)
+    # # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # print(input_state.shape)
+    # print(sent_start.shape)
+    # print(sent_end.shape)
     sent_batch_idx = torch.arange(0, batch_size, device=input_state.device).view(batch_size, 1).repeat(1, sent_num)
     sent_start_output = input_state[sent_batch_idx, sent_start]
     sent_end_output = input_state[sent_batch_idx, sent_end]
